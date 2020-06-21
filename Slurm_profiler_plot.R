@@ -13,10 +13,12 @@ library(ggplot2)
 library(patchwork) # combine plots
 
 # data  --------------
-tmp <- h5ls("job_11211998.h5")
-tmp
-# get relevant data and close file  
-df1 <- h5read("job_11211998.h5", "/Steps/0/Nodes/wbn125/Tasks/0")
+tmp <- h5ls("job_13153533.h5")
+
+# get relevant data and close file
+# if there are issues loading the data it will be here, the second 
+# arg should be the path in the final row of tmp$group
+df1 <- h5read("job_13153533.h5", tmp$group[length(tmp$group)])[[1]]
 h5closeAll()
 
 # data transformations (time to hrs, data to GB etc.)
@@ -29,7 +31,7 @@ df1$Write_s <- df1$WriteMB/30
 df1$ReadMB_s <- df1$ReadMB/30
 
 df1 <- df1[c("hours", "CPUUtilization", "RSS_GB", "WriteMB", "ReadMB", 
-  "WriteMB_Cum", "ReadMB_Cum", "Write_s", "ReadMB_s")]
+             "WriteMB_Cum", "ReadMB_Cum", "Write_s", "ReadMB_s")]
 
 # plots --------------
 # CPU
@@ -37,7 +39,7 @@ p1 <- ggplot(df1, aes(hours, CPUUtilization)) +
   geom_line(size = 1, colour = "red") +
   theme_bw() +
   ylab("CPUs")
-  
+
 # RSS
 p2 <- ggplot(df1, aes(hours, RSS_GB)) +
   geom_line(size = 1, colour = "red") +
@@ -47,7 +49,7 @@ p2 <- ggplot(df1, aes(hours, RSS_GB)) +
 # I/O (MB)
 p3 <- ggplot() +
   geom_line(data = df1, aes(hours, WriteMB_Cum), size = 1, colour = "red",
-    linetype = "dotted") +
+            linetype = "dotted") +
   geom_line(data = df1, aes(hours, ReadMB_Cum), size = 1, colour = "red" ) +
   theme_bw() +
   ylab("I/O (MB)")
@@ -55,7 +57,7 @@ p3 <- ggplot() +
 # I/O (MB/s)
 p4 <- ggplot() +
   geom_line(data = df1, aes(hours, WriteMB/30), size = 1, colour = "red",
-    linetype = "dotted") +
+            linetype = "dotted") +
   geom_line(data = df1, aes(hours, ReadMB/30), size = 1, colour = "red") +
   theme_bw() +
   ylab("I/O (MB/s)")
@@ -65,7 +67,7 @@ pAll = p1/p2/p3/p4
 
 ggplotclean <- theme_bw()  + 
   theme(axis.text.x = element_blank(),
-    axis.title.x = element_blank())
+        axis.title.x = element_blank())
 
 # Remove axis labels from top 3 plots 
 pAll[[1]] = pAll[[1]] + ggplotclean
@@ -73,4 +75,3 @@ pAll[[2]] = pAll[[2]] + ggplotclean
 pAll[[3]] = pAll[[3]] + ggplotclean
 
 pAll
-
