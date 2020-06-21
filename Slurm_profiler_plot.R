@@ -13,12 +13,12 @@ library(ggplot2)
 library(patchwork) # combine plots
 
 # data  --------------
-tmp <- h5ls("job_13153533.h5")
+tmp <- h5ls("job_11211998.h5")
 
 # get relevant data and close file
 # if there are issues loading the data it will be here, the second 
 # arg should be the path in the final row of tmp$group
-df1 <- h5read("job_13153533.h5", tmp$group[length(tmp$group)])[[1]]
+df1 <- h5read("job_11211998.h5", tmp$group[length(tmp$group)])[[1]]
 h5closeAll()
 
 # data transformations (time to hrs, data to GB etc.)
